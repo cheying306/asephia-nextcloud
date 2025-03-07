@@ -4,8 +4,11 @@ services:
     image: mariadb:latest
     volumes:
       - application_mariadb_data:/var/lib/mysql
-    env_file:
-      - .env  # 加載 .env 文件中的環境變數
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
     ports:
       - "3306:3306"  # 將 3306 端口暴露出來
 
@@ -24,18 +27,12 @@ services:
 
   nextcloud:
     container_name: nextcloud
-    image: $DOCKER_USERNAME/asephia-nextcloud:latest  # 使用 Docker Hub 上的最新映像
+    image: ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 使用 Docker Hub 上的最新映像
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - application_nextcloud_data:/var/www/html  # 初始化預設, 存放於docker volumes
-      # - /mnt/d:/var/www/html/data/D  # SMB掛載方式
-      # - /mnt/e:/var/www/html/data/E  # SMB掛載方式
-      # - /mnt/f:/var/www/html/data/F  # SMB掛載方式
-      # - /mnt/d/NextcloudData:/var/www/html/data/D
-      # - /mnt/e/NextcloudData:/var/www/html/data/E
-      # - /mnt/f/NextcloudData:/var/www/html/data/F
     ports:
       - 8888:80
     environment:

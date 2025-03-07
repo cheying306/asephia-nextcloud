@@ -37,14 +37,15 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}  # 遠程伺服器的用戶名
           key: ${{ secrets.REMOTE_SSH_KEY }}  # 遠程伺服器的 SSH 密鑰
           script: |
+            # GitHub Secrets 注入 Docker Compose
+            export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
+            export DB_DATABASE="${{ secrets.DB_DATABASE }}"
+            export DB_USER="${{ secrets.DB_USER }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            
             # 拉取最新的 Docker 映像
             docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  
             
-            # 檢查是否存在 .env 文件，並確保環境變數正確
-            if [ ! -f /path/to/your/.env ]; then
-              echo "Error: .env file is missing!"
-              exit 1
-            fi
-
-            # 使用 docker-compose 來重啟容器，並指定 .env 文件
-            docker-compose -f /path/to/your/docker-compose.yml --env-file /path/to/your/.env up -d  # 使用 Docker Compose 重啟容器
+            # 使用 docker-compose 來重啟容器，並指定環境變數
+            cd /home/nextcloud-admin/asephia-nextcloud  # 切換到包含 docker-compose.yml 的目錄
+            docker-compose -f docker-compose.yml up -d  # 使用 Docker Compose 重啟容器

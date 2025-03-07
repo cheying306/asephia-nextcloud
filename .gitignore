@@ -184,6 +184,3 @@ core/js/mimetypelist.js
 cypress/downloads
 cypress/snapshots
 cypress/videos
-
-#my DB
-.env
