@@ -1,0 +1,24 @@
+stages:
+  - build
+  - deploy
+
+# Build the Docker image
+build:
+  stage: build
+  script:
+    - echo "Building Docker image"
+    - docker build -t $DOCKER_USERNAME/asephia-nextcloud:latest .
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - docker push $DOCKER_USERNAME/asephia-nextcloud:latest
+  only:
+    - asephia  # 當您將變更推送到 asephia 分支時執行
+
+# Deploy to the remote server
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to remote server"
+    - ssh -i $REMOTE_SSH_KEY $REMOTE_USER@$REMOTE_HOST 'docker pull $DOCKER_USERNAME/asephia-nextcloud:latest'
+    - ssh -i $REMOTE_SSH_KEY $REMOTE_USER@$REMOTE_HOST 'docker-compose -f /path/to/your/docker-compose.yml up -d'
+  only:
+    - asephia  # 當您將變更推送到 asephia 分支時執行
