@@ -30,14 +30,29 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 Docker 映像到 Docker Hub
 
-      - name: SSH into server and pull new image
+  deploy:
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 執行環境
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2  # 檢出代碼
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.REMOTE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: SSH into server and deploy
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.REMOTE_HOST }}  # 遠程伺服器的主機地址
           username: ${{ secrets.REMOTE_USER }}  # 遠程伺服器的用戶名
           key: ${{ secrets.REMOTE_SSH_KEY }}  # 遠程伺服器的 SSH 密鑰
           script: |
-            # GitHub Secrets 注入 Docker Compose
+            echo "Successfully connected to remote server"
+            # 以下是部署指令：
             export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
             export DB_DATABASE="${{ secrets.DB_DATABASE }}"
             export DB_USER="${{ secrets.DB_USER }}"
