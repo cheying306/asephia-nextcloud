@@ -1,4 +1,4 @@
-# v1
+# v2
 name: Deploy Nextcloud
 
 on:
@@ -46,7 +46,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
 
       - name: SSH into server and deploy
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@v0.1.8  # 更新版本
         with:
           host: ${{ secrets.REMOTE_HOST }}  # 遠程伺服器的主機地址
           username: ${{ secrets.REMOTE_USER }}  # 遠程伺服器的用戶名
