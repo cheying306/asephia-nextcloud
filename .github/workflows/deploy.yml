@@ -1,4 +1,4 @@
-# v6
+# v7
 name: Deploy Nextcloud
 
 on:
@@ -75,7 +75,7 @@ jobs:
             # 只有當映像更新時才重啟容器
             if [ "$CURRENT_IMAGE_ID" != "$LATEST_IMAGE_ID" ]; then
               echo "Nextcloud image updated, restarting container..."
-              docker-compose up -d --no-deps --force-recreate nextcloud
+              docker-compose -f /home/nextcloud-admin/asephia-nextcloud/docker-compose.yml up -d --no-deps --force-recreate nextcloud
             else
               echo "Nextcloud image is already up-to-date, no restart needed."
             fi

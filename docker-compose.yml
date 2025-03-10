@@ -31,13 +31,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    pull_policy: always  # 確保每次啟動時都檢查 Docker Hub
     volumes:
       - application_nextcloud_data:/var/www/html  # 初始化預設, 存放於docker volumes
     ports:
       - 8888:80
     environment:
       - MYSQL_HOST=mariadb
-    restart: unless-stopped  # 只在異常狀況下重啟
+    restart: always  # 容器會自動重啟
 
   certbot:
     container_name: certbot
