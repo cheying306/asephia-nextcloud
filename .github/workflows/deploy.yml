@@ -1,4 +1,4 @@
-# v2
+# v3
 name: Deploy Nextcloud
 
 on:
@@ -44,6 +44,7 @@ jobs:
           echo "${{ secrets.REMOTE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -v"  # 啟用 debug 模式
 
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@v0.1.8  # 更新版本
