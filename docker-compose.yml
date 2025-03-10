@@ -37,10 +37,7 @@ services:
       - 8888:80
     environment:
       - MYSQL_HOST=mariadb
-    depends_on:
-      - mariadb
-    links:
-      - mariadb
+    restart: unless-stopped  # 只在異常狀況下重啟
 
   certbot:
     container_name: certbot

@@ -1,4 +1,4 @@
-# v5
+# v6
 name: Deploy Nextcloud
 
 on:
@@ -8,14 +8,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 執行環境
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 環境
 
     steps:
       - name: Check out code
         uses: actions/checkout@v2  # 檢出代碼
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2  # 使用最新版本的 Docker Buildx
+        uses: docker/setup-buildx-action@v2  # 設定 Docker Buildx
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -32,7 +32,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 Docker 映像到 Docker Hub
 
   deploy:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 執行環境
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 環境
 
     steps:
       - name: Check out code
@@ -44,25 +44,38 @@ jobs:
           echo "${{ secrets.REMOTE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-          export GIT_SSH_COMMAND="ssh -v"  # 啟用 debug 模式
 
       - name: SSH into server and deploy
-        uses: appleboy/ssh-action@v0.1.8  # 更新版本
+        uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.REMOTE_HOST }}  # 遠程伺服器的主機地址
-          username: ${{ secrets.REMOTE_USER }}  # 遠程伺服器的用戶名
-          key: ${{ secrets.REMOTE_SSH_KEY }}  # 遠程伺服器的 SSH 密鑰
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
           script: |
             echo "Successfully connected to remote server"
-            # 以下是部署指令：
+
+            # 設定環境變數
             export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
             export DB_DATABASE="${{ secrets.DB_DATABASE }}"
             export DB_USER="${{ secrets.DB_USER }}"
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-            
+
+            # 進入部署目錄
+            cd /home/nextcloud-admin/asephia-nextcloud
+
             # 拉取最新的 Docker 映像
-            docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  
-            
-            # 使用 docker-compose 來重啟容器，並指定環境變數
-            cd /home/nextcloud-admin/asephia-nextcloud  # 切換到包含 docker-compose.yml 的目錄
-            docker-compose -f docker-compose.yml up -d  # 使用 Docker Compose 重啟容器
+            docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
+
+            # 獲取目前運行的 nextcloud 容器的映像 ID
+            CURRENT_IMAGE_ID=$(docker inspect --format='{{.Image}}' nextcloud || echo "")
+
+            # 獲取最新的 nextcloud 映像 ID
+            LATEST_IMAGE_ID=$(docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest)
+
+            # 只有當映像更新時才重啟容器
+            if [ "$CURRENT_IMAGE_ID" != "$LATEST_IMAGE_ID" ]; then
+              echo "Nextcloud image updated, restarting container..."
+              docker-compose up -d --no-deps --force-recreate nextcloud
+            else
+              echo "Nextcloud image is already up-to-date, no restart needed."
+            fi
