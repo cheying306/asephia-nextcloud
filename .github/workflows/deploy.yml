@@ -1,4 +1,4 @@
-# v9.5
+# v9.6
 name: Deploy Nextcloud
 
 on:
@@ -23,12 +23,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # 從 Secrets 獲取 Docker Hub 用戶名
           password: ${{ secrets.DOCKER_PASSWORD }}  # 從 Secrets 獲取 Docker Hub 密碼
 
-      - name: Build Docker image
+      - name: Build and Push Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest .  # 構建 Docker 映像
-
-      - name: Push Docker image to Docker Hub
-        run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 Docker 映像到 Docker Hub
 
   deploy:
@@ -55,24 +52,31 @@ jobs:
             echo "Successfully connected to remote Windows server"
 
             REM 確保 Docker CLI 可用 (適用於 Windows)
-            set PATH=%PATH%;C:\Program Files\Docker\Docker\resources\bin
+            set PATH=%PATH%;C:\\Program Files\\Docker\\Docker\\resources\\bin
+
+            REM 切換到 Nextcloud Docker Compose 目錄
+            cd /d C:\\Data\\Application\\asephia-nextcloud
 
             REM 拉取最新的 Nextcloud 映像
             echo "Pulling the latest Nextcloud image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
 
             REM 取得當前運行的 Nextcloud 容器的映像 ID
-            FOR /F "tokens=* USEBACKQ" %%F IN (`docker inspect --format="{{.Image}}" nextcloud 2^>nul`) DO SET CURRENT_IMAGE_ID=%%F
+            FOR /F %%F IN ('powershell -Command "(docker inspect nextcloud | ConvertFrom-Json)[0].Image"') DO (
+                SET CURRENT_IMAGE_ID=%%F
+            )
             echo "Current running image ID: %CURRENT_IMAGE_ID%"
 
             REM 取得最新的 Nextcloud 映像 ID
-            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO SET LATEST_IMAGE_ID=%%F
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO (
+                SET LATEST_IMAGE_ID=%%F
+            )
             echo "Latest image ID: %LATEST_IMAGE_ID%"
 
             REM 若映像有更新，則重啟容器
             IF NOT "%CURRENT_IMAGE_ID%" == "%LATEST_IMAGE_ID%" (
-              echo Nextcloud image updated, restarting container...
-              docker compose -f "C:\Data\Application\asephia-nextcloud\docker-compose.yml" up -d --no-deps --force-recreate nextcloud
+                echo "Nextcloud image updated, restarting container..."
+                docker compose up -d --no-deps --force-recreate nextcloud
             ) ELSE (
-              echo Nextcloud image is already up-to-date, no restart needed.
+                echo "Nextcloud image is already up-to-date, no restart needed."
             )
