@@ -1,4 +1,4 @@
-# v9
+# v9.1 - Optimized Deployment Script
 name: Deploy Nextcloud
 
 on:
@@ -23,12 +23,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # 從 Secrets 獲取 Docker Hub 用戶名
           password: ${{ secrets.DOCKER_PASSWORD }}  # 從 Secrets 獲取 Docker Hub 密碼
 
-      - name: Build Docker image
+      - name: Build and Push Docker Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest .  # 構建 Docker 映像
-
-      - name: Push Docker image to Docker Hub
-        run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 Docker 映像到 Docker Hub
 
   deploy:
@@ -53,29 +50,26 @@ jobs:
           key: ${{ secrets.REMOTE_SSH_KEY }}
           script: |
             echo "Successfully connected to remote server"
-
-            # 設定環境變數
-            export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
-            export DB_DATABASE="${{ secrets.DB_DATABASE }}"
-            export DB_USER="${{ secrets.DB_USER }}"
-            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-
-            # 進入部署目錄
-            cd /home/nextcloud-admin/asephia-nextcloud
-
-            # 拉取最新的 Docker 映像
+            
+            :: 設定環境變數
+            set DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
+            set DB_DATABASE=${{ secrets.DB_DATABASE }}
+            set DB_USER=${{ secrets.DB_USER }}
+            set DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+                        
+            :: 拉取最新的 Docker 映像
             docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
-
-            # 獲取目前運行的 nextcloud 容器的映像 ID
-            CURRENT_IMAGE_ID=$(docker inspect --format='{{.Image}}' nextcloud || echo "")
-
-            # 獲取最新的 nextcloud 映像 ID
-            LATEST_IMAGE_ID=$(docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest)
-
-            # 只有當映像更新時才重啟容器
-            if [ "$CURRENT_IMAGE_ID" != "$LATEST_IMAGE_ID" ]; then
-              echo "Nextcloud image updated, restarting container..."
+            
+            :: 取得當前運行的 Nextcloud 容器映像 ID
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker inspect --format="{{.Image}}" nextcloud 2^>nul`) DO SET CURRENT_IMAGE_ID=%%F
+            
+            :: 取得最新的 Nextcloud 映像 ID
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO SET LATEST_IMAGE_ID=%%F
+            
+            :: 若映像有更新，則重啟容器
+            IF NOT "%CURRENT_IMAGE_ID%" == "%LATEST_IMAGE_ID%" (
+              echo Nextcloud image updated, restarting container...
               docker-compose -f /home/nextcloud-admin/asephia-nextcloud/docker-compose.yml up -d --no-deps --force-recreate nextcloud
-            else
-              echo "Nextcloud image is already up-to-date, no restart needed."
-            fi
+            ) ELSE (
+              echo Nextcloud image is already up-to-date, no restart needed.
+            )
