@@ -1,4 +1,4 @@
-# v9.3
+# v9.4
 name: Deploy Nextcloud
 
 on:
@@ -51,25 +51,25 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
-        run: |
-          echo "Successfully connected to remote Windows server"
+          script: |
+            echo "Successfully connected to remote Windows server"
 
-          REM 確保 Docker CLI 可用 (適用於 Windows)
-          set PATH=%PATH%;C:\Program Files\Docker\Docker\resources\bin
+            REM 確保 Docker CLI 可用 (適用於 Windows)
+            set PATH=%PATH%;C:\Program Files\Docker\Docker\resources\bin
 
-          REM 拉取最新的 Nextcloud 映像
-          docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
+            REM 拉取最新的 Nextcloud 映像
+            docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
 
-          REM 取得當前運行的 Nextcloud 容器的映像 ID
-          FOR /F "tokens=* USEBACKQ" %%F IN (`docker inspect --format="{{.Image}}" nextcloud 2^>nul`) DO SET CURRENT_IMAGE_ID=%%F
+            REM 取得當前運行的 Nextcloud 容器的映像 ID
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker inspect --format="{{.Image}}" nextcloud 2^>nul`) DO SET CURRENT_IMAGE_ID=%%F
 
-          REM 取得最新的 Nextcloud 映像 ID
-          FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO SET LATEST_IMAGE_ID=%%F
+            REM 取得最新的 Nextcloud 映像 ID
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO SET LATEST_IMAGE_ID=%%F
 
-          REM 若映像有更新，則重啟容器
-          IF NOT "%CURRENT_IMAGE_ID%" == "%LATEST_IMAGE_ID%" (
-            echo Nextcloud image updated, restarting container...
-            docker compose -f "C:\Data\Application\asephia-nextcloud\docker-compose.yml" up -d --no-deps --force-recreate nextcloud
-          ) ELSE (
-            echo Nextcloud image is already up-to-date, no restart needed.
-          )
+            REM 若映像有更新，則重啟容器
+            IF NOT "%CURRENT_IMAGE_ID%" == "%LATEST_IMAGE_ID%" (
+              echo Nextcloud image updated, restarting container...
+              docker compose -f "C:\Data\Application\asephia-nextcloud\docker-compose.yml" up -d --no-deps --force-recreate nextcloud
+            ) ELSE (
+              echo Nextcloud image is already up-to-date, no restart needed.
+            )
