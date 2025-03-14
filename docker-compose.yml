@@ -1,7 +1,7 @@
 services:
   mariadb:
     container_name: mariadb
-    image: mariadb:latest
+    image: mariadb:10.11
     volumes:
       - application_mariadb_data:/var/lib/mysql
     environment:
