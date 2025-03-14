@@ -30,12 +30,6 @@ use OCA\DAV\Events\AddressBookUpdatedEvent;
 use OCA\DAV\Events\CalendarCreatedEvent;
 use OCA\DAV\Events\CalendarDeletedEvent;
 use OCA\DAV\Events\CalendarMovedToTrashEvent;
-use OCA\DAV\Events\CalendarObjectCreatedEvent;
-use OCA\DAV\Events\CalendarObjectDeletedEvent;
-use OCA\DAV\Events\CalendarObjectMovedEvent;
-use OCA\DAV\Events\CalendarObjectMovedToTrashEvent;
-use OCA\DAV\Events\CalendarObjectRestoredEvent;
-use OCA\DAV\Events\CalendarObjectUpdatedEvent;
 use OCA\DAV\Events\CalendarPublishedEvent;
 use OCA\DAV\Events\CalendarRestoredEvent;
 use OCA\DAV\Events\CalendarShareUpdatedEvent;
@@ -57,6 +51,7 @@ use OCA\DAV\Listener\CalendarPublicationListener;
 use OCA\DAV\Listener\CalendarShareUpdateListener;
 use OCA\DAV\Listener\CardListener;
 use OCA\DAV\Listener\ClearPhotoCacheListener;
+use OCA\DAV\Listener\DavAdminSettingsListener;
 use OCA\DAV\Listener\OutOfOfficeListener;
 use OCA\DAV\Listener\SubscriptionListener;
 use OCA\DAV\Listener\TrustedServerRemovedListener;
@@ -65,6 +60,7 @@ use OCA\DAV\Listener\UserPreferenceListener;
 use OCA\DAV\Search\ContactsSearchProvider;
 use OCA\DAV\Search\EventsSearchProvider;
 use OCA\DAV\Search\TasksSearchProvider;
+use OCA\DAV\Settings\Admin\SystemAddressBookSettings;
 use OCA\DAV\SetupChecks\NeedsSystemAddressBookSync;
 use OCA\DAV\SetupChecks\WebdavEndpoint;
 use OCA\DAV\UserMigration\CalendarMigrator;
@@ -75,6 +71,12 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\IAppContainer;
+use OCP\Calendar\Events\CalendarObjectCreatedEvent;
+use OCP\Calendar\Events\CalendarObjectDeletedEvent;
+use OCP\Calendar\Events\CalendarObjectMovedEvent;
+use OCP\Calendar\Events\CalendarObjectMovedToTrashEvent;
+use OCP\Calendar\Events\CalendarObjectRestoredEvent;
+use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Config\BeforePreferenceDeletedEvent;
 use OCP\Config\BeforePreferenceSetEvent;
@@ -85,6 +87,8 @@ use OCP\Federation\Events\TrustedServerRemovedEvent;
 use OCP\Files\AppData\IAppDataFactory;
 use OCP\IUserSession;
 use OCP\Server;
+use OCP\Settings\Events\DeclarativeSettingsGetValueEvent;
+use OCP\Settings\Events\DeclarativeSettingsSetValueEvent;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\BeforeUserIdUnassignedEvent;
 use OCP\User\Events\OutOfOfficeChangedEvent;
@@ -212,6 +216,12 @@ class Application extends App implements IBootstrap {
 
 		$context->registerSetupCheck(NeedsSystemAddressBookSync::class);
 		$context->registerSetupCheck(WebdavEndpoint::class);
+
+		// register admin settings form and listener(s)
+		$context->registerDeclarativeSettings(SystemAddressBookSettings::class);
+		$context->registerEventListener(DeclarativeSettingsGetValueEvent::class, DavAdminSettingsListener::class);
+		$context->registerEventListener(DeclarativeSettingsSetValueEvent::class, DavAdminSettingsListener::class);
+
 	}
 
 	public function boot(IBootContext $context): void {

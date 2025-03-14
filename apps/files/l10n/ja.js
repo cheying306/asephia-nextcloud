@@ -80,6 +80,7 @@ OC.L10N.register(
     "Go to the \"{dir}\" directory" : "\"{dir}\" ディレクトリに移動する",
     "Current directory path" : "現在のディレクトリパス",
     "Your have used your space quota and cannot upload files anymore" : "あなたのクォータ容量を使い果たし、ファイルをアップロードできなくなりました。",
+    "You do not have permission to upload or create files here." : "ここにファイルをアップロードまたは作成する権限がありません。",
     "Drag and drop files here to upload" : "ここにファイルをドラッグ＆ドロップしてアップロードする",
     "Favorite" : "お気に入り",
     "Back" : "戻る",
@@ -234,9 +235,6 @@ OC.L10N.register(
     "Failed to convert files: {message}" : "ファイルの変換に失敗しました: {message}",
     "All files failed to be converted" : "すべてのファイルの変換に失敗しました",
     "One file could not be converted: {message}" : "1つのファイルが変換できませんでした: {message}",
-    "One file could not be converted" : "1つのファイルが変換できませんでした",
-    "{count} files could not be converted" : "{count}個のファイルが変換できませんでした",
-    "{count} files successfully converted" : "{count}個のファイルの変換に成功しました",
     "Files successfully converted" : "ファイルは正常に変換されました",
     "Failed to convert files" : "ファイルの変換に失敗しました",
     "Converting file …" : "ファイルの変換…",
@@ -453,6 +451,8 @@ OC.L10N.register(
     "Favor" : "好意的",
     "Not favored" : "好ましくない",
     "Submitting fields…" : "フィールドを送信中…",
-    "Filter filenames…" : "ファイルネームフィルター…"
+    "Filter filenames…" : "ファイルネームフィルター…",
+    "{count} files could not be converted" : "{count}個のファイルが変換できませんでした",
+    "{count} files successfully converted" : "{count}個のファイルの変換に成功しました"
 },
 "nplurals=1; plural=0;");
