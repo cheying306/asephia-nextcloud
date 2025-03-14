@@ -1,4 +1,4 @@
-# v9.2
+# v9.3
 name: Deploy Nextcloud
 
 on:
@@ -51,8 +51,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
-        shell: cmd  # 重要：在 Windows 上使用 CMD 而非默認的 sh
-        script: |
+        run: |
           echo "Successfully connected to remote Windows server"
 
           REM 確保 Docker CLI 可用 (適用於 Windows)
