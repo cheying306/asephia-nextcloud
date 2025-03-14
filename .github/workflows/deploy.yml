@@ -1,4 +1,4 @@
-# v9.4
+# v9.5
 name: Deploy Nextcloud
 
 on:
@@ -58,13 +58,16 @@ jobs:
             set PATH=%PATH%;C:\Program Files\Docker\Docker\resources\bin
 
             REM 拉取最新的 Nextcloud 映像
+            echo "Pulling the latest Nextcloud image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
 
             REM 取得當前運行的 Nextcloud 容器的映像 ID
             FOR /F "tokens=* USEBACKQ" %%F IN (`docker inspect --format="{{.Image}}" nextcloud 2^>nul`) DO SET CURRENT_IMAGE_ID=%%F
+            echo "Current running image ID: %CURRENT_IMAGE_ID%"
 
             REM 取得最新的 Nextcloud 映像 ID
             FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO SET LATEST_IMAGE_ID=%%F
+            echo "Latest image ID: %LATEST_IMAGE_ID%"
 
             REM 若映像有更新，則重啟容器
             IF NOT "%CURRENT_IMAGE_ID%" == "%LATEST_IMAGE_ID%" (
