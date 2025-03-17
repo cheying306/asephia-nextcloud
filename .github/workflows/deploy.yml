@@ -1,4 +1,4 @@
-# v9.7
+# v9.8
 name: Deploy Nextcloud
 
 on:
@@ -25,8 +25,9 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest .  # 構建 Docker 映像
-          docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 Docker 映像到 Docker Hub
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest -t ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:31.0.1.2 .  # 同時使用 latest 和 31.0.1.2 標籤來構建 Docker 映像
+          docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 推送 latest 到 Docker 映像到 Docker Hub
+          docker push ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:31.0.1.2  # 推送 31.0.1.2 標籤
 
   deploy:
     runs-on: ubuntu-latest  # 使用最新的 Ubuntu 環境

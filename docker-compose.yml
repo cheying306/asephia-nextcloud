@@ -1,7 +1,7 @@
 services:
   mariadb:
     container_name: mariadb
-    image: mariadb:10.11
+    image: mariadb:latest
     volumes:
       - application_mariadb_data:/var/lib/mysql
     environment:
@@ -27,7 +27,7 @@ services:
 
   nextcloud:
     container_name: nextcloud
-    image: ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest  # 使用 Docker Hub 上的最新映像
+    image: ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:31.0.1.2  # 使用 Docker Hub 上的 31.0.1.2
     build:
       context: .
       dockerfile: Dockerfile
