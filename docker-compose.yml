@@ -27,7 +27,7 @@ services:
 
   nextcloud:
     container_name: nextcloud
-    image: ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:31.0.1.2  # 使用 Docker Hub 上的 31.0.1.2
+    image: ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest  # 使用 Docker Hub 上的 latest
     build:
       context: .
       dockerfile: Dockerfile
