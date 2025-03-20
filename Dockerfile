@@ -4,7 +4,6 @@ FROM DOCKER_USERNAME/nextcloud:latest
 # 安裝 smbclient
 RUN apt-get update && \
     apt-get install -y smbclient libsmbclient-dev && \
-    pecl install smbclient && \
     docker-php-ext-enable smbclient && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*  # 清理不再需要的 apt 緩存
