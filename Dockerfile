@@ -3,13 +3,11 @@ FROM DOCKER_USERNAME/nextcloud:latest
 
 # 安裝 smbclient
 RUN apt-get update && \
-    apt-get install -y smbclient && \
-    apt-get clean
-
-# 安裝 PHP smbclient 擴展
-RUN apt-get install -y libsmblib0 libsmblib-dev \
-    && pecl install smbclient \
-    && docker-php-ext-enable smbclient
+    apt-get install -y smbclient libsmbclient-dev && \
+    pecl install smbclient && \
+    docker-php-ext-enable smbclient && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*  # 清理不再需要的 apt 緩存
 
 # 複製自定義的 php.ini 配置文件
 COPY php.ini /usr/local/etc/php/conf.d/20-smbclient.ini
