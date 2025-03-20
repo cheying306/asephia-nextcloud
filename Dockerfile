@@ -1,5 +1,7 @@
+# 先聲明 ARG，並提供默認值
+ARG DOCKER_USERNAME=mydockerhubusername  # 預設值（可被 --build-arg 覆蓋）
+
 # 透過 build-arg 傳入 Docker Hub 用戶名 使用官方 Nextcloud 映像檔作為基礎映像檔
-ARG DOCKER_USERNAME
 FROM ${DOCKER_USERNAME}/nextcloud:latest  # 使用 Docker Hub 上的 latest
 
 # 安裝 smbclient
