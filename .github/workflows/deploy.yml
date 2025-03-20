@@ -1,4 +1,4 @@
-# v0.1
+# v0.2
 name: Deploy Nextcloud
 
 on:
@@ -24,12 +24,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}  # 從 Secrets 獲取 Docker Hub 密碼
 
       - name: Build and Push Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/nextcloud:31.0.1.2 -f Dockerfile .  # 使用 nextcloud:31.0.1.2 標籤來構建映像
-          docker push ${{ secrets.DOCKER_USERNAME }}/nextcloud:31.0.1.2  # 推送到 Docker Hub 上的 nextcloud:31.0.1.2 標籤
-          
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
-          docker push ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest  # 推送到 Docker Hub 上的 latest 標籤
+        run: |          
+          docker build --build-arg DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} -t ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
+          docker push ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest  # 推送到 Docker Hub 上的 latest 標籃
 
   deploy:
     runs-on: ubuntu-latest  # 使用最新的 Ubuntu 環境

@@ -3,7 +3,7 @@ services:
     container_name: mariadb
     image: mariadb:latest
     volumes:
-      - application_mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DB_DATABASE}
@@ -27,13 +27,13 @@ services:
 
   nextcloud:
     container_name: nextcloud
-    image: ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest  # 使用 Docker Hub 上的 latest
+    image: nextcloud  # image命名, 此參數禁止調整
     build:
       context: .
       dockerfile: Dockerfile
     pull_policy: always  # 確保每次啟動時都檢查 Docker Hub
     volumes:
-      - application_nextcloud_data:/var/www/html  # 初始化預設, 存放於docker volumes
+      - nextcloud_data:/var/www/html  # 初始化預設, 存放於docker volumes
     ports:
       - 8888:80
     environment:
@@ -51,5 +51,5 @@ services:
     command: certonly --dns-cloudflare --dns-cloudflare-credentials /cloudflare.ini --email cheying.tw@gmail.com --agree-tos --no-eff-email -d *.asephia.com
 
 volumes:
-  application_mariadb_data:
-  application_nextcloud_data:
+  mariadb_data:
+  nextcloud_data:
