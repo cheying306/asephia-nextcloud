@@ -27,9 +27,14 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}  # 從 Secrets 獲取 Docker Hub 用戶名
           password: ${{ env.DOCKER_PASSWORD }}  # 從 Secrets 獲取 Docker Hub 密碼
 
+      - name: Replace placeholder in Dockerfile
+        run: |
+          sed -i "s|DOCKER_USERNAME|${{ env.DOCKER_USERNAME }}|g" Dockerfile
+          cat Dockerfile  # 確認替換是否成功（可選）
+
       - name: Build and Push Docker image
         run: |          
-          docker build --build-arg DOCKER_USERNAME=${{ env.DOCKER_USERNAME }} -t ${{ env.DOCKER_USERNAME }}/nextcloud:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
+          docker build -t ${{ env.DOCKER_USERNAME }}/nextcloud:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
           docker push ${{ env.DOCKER_USERNAME }}/nextcloud:latest  # 推送到 Docker Hub 上的 latest
 
   deploy:
