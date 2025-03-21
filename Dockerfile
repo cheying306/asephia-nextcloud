@@ -9,9 +9,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # COPY custom-apps /var/www/html/custom-apps
 # RUN chown -R www-data:www-data /var/www/html/custom-apps
 
-# 更新 `apt` 並安裝 `smbclient` 相關依賴
+# 更新並安裝 cron 和其他必要工具
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends smbclient libsmbclient-dev libmagickwand-dev && \
+    apt-get install -y cron smbclient libsmbclient-dev libmagickwand-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # 安裝 `smbclient` 擴展，確保對應 PHP 版本
@@ -23,4 +23,5 @@ RUN if ! php -m | grep -q smbclient; then \
     fi
 
 # 確保容器啟動時不會因服務錯誤崩潰
-CMD ["apache2-foreground"]
+# 設定 cron 和啟動服務
+CMD service cron start && apache2-foreground
