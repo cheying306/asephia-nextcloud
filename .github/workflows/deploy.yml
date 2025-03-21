@@ -1,4 +1,4 @@
-# v0.6
+# v0.7
 name: Deploy Nextcloud
 
 on:
@@ -29,8 +29,8 @@ jobs:
 
       - name: Build and Push Docker image
         run: |          
-          docker build -t ${{ env.DOCKER_USERNAME }}/nextcloud:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
-          docker push ${{ env.DOCKER_USERNAME }}/nextcloud:latest  # 推送到 Docker Hub 上的 latest
+          docker build -t ${{ env.DOCKER_USERNAME }}/nextcloud-with-smbclient:latest -f Dockerfile .  # 使用 latest 標籤來構建映像
+          docker push ${{ env.DOCKER_USERNAME }}/nextcloud-with-smbclient:latest  # 推送到 Docker Hub 上的 latest
 
   deploy:
     runs-on: ubuntu-latest  # 使用最新的 Ubuntu 環境
@@ -63,7 +63,7 @@ jobs:
 
             REM 拉取最新的 Nextcloud 映像
             echo "Pulling the latest Nextcloud image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nextcloud-with-smbclient:latest
 
             REM 取得當前運行的 Nextcloud 容器的映像 ID
             FOR /F %%F IN ('powershell -Command "(docker inspect nextcloud | ConvertFrom-Json)[0].Image"') DO (
@@ -72,7 +72,7 @@ jobs:
             echo "Current running image ID: %CURRENT_IMAGE_ID%"
 
             REM 取得最新的 Nextcloud 映像 ID
-            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest`) DO (
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/nextcloud-with-smbclient:latest`) DO (
                 SET LATEST_IMAGE_ID=%%F
             )
             echo "Latest image ID: %LATEST_IMAGE_ID%"
