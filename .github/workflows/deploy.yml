@@ -1,4 +1,4 @@
-# v0.5
+# v0.6
 name: Deploy Nextcloud
 
 on:
@@ -26,11 +26,6 @@ jobs:
         with:
           username: ${{ env.DOCKER_USERNAME }}  # 從 Secrets 獲取 Docker Hub 用戶名
           password: ${{ env.DOCKER_PASSWORD }}  # 從 Secrets 獲取 Docker Hub 密碼
-
-      - name: Replace placeholder in Dockerfile
-        run: |
-          sed -i "s|DOCKER_USERNAME|${{ env.DOCKER_USERNAME }}|g" Dockerfile
-          cat Dockerfile  # 確認替換是否成功（可選）
 
       - name: Build and Push Docker image
         run: |          
