@@ -1,4 +1,4 @@
-# v0.4
+# v0.5
 name: Deploy Nextcloud
 
 on:
@@ -64,11 +64,11 @@ jobs:
             set PATH=%PATH%;C:\\Program Files\\Docker\\Docker\\resources\\bin
 
             REM 切換到 Nextcloud Docker Compose 目錄
-            cd /d C:\\Data\\Application\\asephia-nextcloud
+            cd /d C:\\Tools\\Application
 
             REM 拉取最新的 Nextcloud 映像
             echo "Pulling the latest Nextcloud image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest
 
             REM 取得當前運行的 Nextcloud 容器的映像 ID
             FOR /F %%F IN ('powershell -Command "(docker inspect nextcloud | ConvertFrom-Json)[0].Image"') DO (
@@ -77,7 +77,7 @@ jobs:
             echo "Current running image ID: %CURRENT_IMAGE_ID%"
 
             REM 取得最新的 Nextcloud 映像 ID
-            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/asephia-nextcloud:latest`) DO (
+            FOR /F "tokens=* USEBACKQ" %%F IN (`docker images -q ${{ secrets.DOCKER_USERNAME }}/nextcloud:latest`) DO (
                 SET LATEST_IMAGE_ID=%%F
             )
             echo "Latest image ID: %LATEST_IMAGE_ID%"

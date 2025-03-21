@@ -1,15 +1,17 @@
 # 透過 sed 替換成 Docker Hub 用戶名
 FROM DOCKER_USERNAME/nextcloud:latest
 
-# 安裝 smbclient
+# 設定環境變數，確保非互動模式
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 更新 `apt` 並安裝 `smbclient` 相關依賴
 RUN apt-get update && \
-    apt-get install -y smbclient libsmbclient-dev && \
-    docker-php-ext-enable smbclient && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*  # 清理不再需要的 apt 緩存
+    apt-get install -y --no-install-recommends smbclient libsmbclient-dev libmagickwand-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# 複製自定義的 php.ini 配置文件
-COPY php.ini /usr/local/etc/php/conf.d/20-smbclient.ini
+# 安裝 `smbclient` 擴展，確保對應 PHP 版本
+RUN pecl install smbclient && \
+    echo "extension=smbclient.so" > /usr/local/etc/php/conf.d/docker-php-ext-smbclient.ini
 
-# 如果需要，您可以重啟 PHP-FPM 服務，根據您的環境來決定是否需要這一步
-# RUN service php8.1-fpm restart   # 在 Nextcloud 的容器中，這通常不需要手動執行
+# 確保容器啟動時不會因服務錯誤崩潰
+CMD ["apache2-foreground"]
