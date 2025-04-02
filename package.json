@@ -60,7 +60,7 @@
     "@nextcloud/paths": "^2.2.1",
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/sharing": "^0.2.4",
-    "@nextcloud/upload": "^1.9.0",
+    "@nextcloud/upload": "^1.9.1",
     "@nextcloud/vue": "^8.23.1",
     "@simplewebauthn/browser": "^12.0.0",
     "@vueuse/components": "^11.1.0",
@@ -154,7 +154,7 @@
     "cypress-if": "^1.13.2",
     "cypress-split": "^1.24.14",
     "cypress-wait-until": "^3.0.2",
-    "dockerode": "^4.0.2",
+    "dockerode": "^4.0.4",
     "eslint-plugin-cypress": "^3.6.0",
     "eslint-plugin-es": "^4.1.0",
     "exports-loader": "^5.0.0",
@@ -174,7 +174,7 @@
     "puppeteer": "^24.4.0",
     "raw-loader": "^4.0.2",
     "regextras": "^0.8.0",
-    "sass": "^1.81.0",
+    "sass": "^1.85.1",
     "sass-loader": "^16.0.2",
     "sinon": "<= 5.0.7",
     "style-loader": "^4.0.0",
@@ -188,7 +188,7 @@
     "vitest": "^3.0.8",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.7.16",
-    "wait-on": "^8.0.1",
+    "wait-on": "^8.0.3",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.0.2",
     "webpack-merge": "^6.0.1",
@@ -202,6 +202,9 @@
     "npm": "^10.0.0"
   },
   "overrides": {
-    "colors": "1.4.0"
+    "colors": "1.4.0",
+    "mdast-util-gfm": {
+      "mdast-util-gfm-autolink-literal": "2.0.0"
+    }
   }
 }
