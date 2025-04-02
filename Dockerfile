@@ -4,12 +4,10 @@ FROM nextcloud:latest
 # 設定環境變數，確保非互動模式
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 如果要將異動的程式打包進 image, 需在此進行程式的複製並設定資料夾權限
+# 如果要將異動的程式打包進image, 需在此進行程式的複製並設定資料夾權限
 # 另外 actions 配置可能也需要設定拉取 git 子模組
-COPY custom-apps /var/www/html/custom-apps
-RUN chown -R www-data:www-data /var/www/html/custom-apps \
-    && find /var/www/html/custom-apps -type d -exec chmod 755 {} \; \
-    && find /var/www/html/custom-apps -type f -exec chmod 644 {} \;
+# COPY custom-apps /var/www/html/custom-apps
+# RUN chown -R www-data:www-data /var/www/html/custom-apps
 
 # 更新並安裝 cron 和其他必要工具
 RUN apt-get update && \
