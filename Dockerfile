@@ -4,10 +4,12 @@ FROM nextcloud:latest
 # 設定環境變數，確保非互動模式
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 如果要將異動的程式打包進image, 需在此進行程式的複製並設定資料夾權限
+# 如果要將異動的程式打包進 image, 需在此進行程式的複製並設定資料夾權限
 # 另外 actions 配置可能也需要設定拉取 git 子模組
-# COPY custom-apps /var/www/html/custom-apps
-# RUN chown -R www-data:www-data /var/www/html/custom-apps
+COPY custom-apps /var/www/html/custom-apps
+RUN chown -R www-data:www-data /var/www/html/custom-apps \
+    && find /var/www/html/custom-apps -type d -exec chmod 755 {} \; \
+    && find /var/www/html/custom-apps -type f -exec chmod 644 {} \;
 
 # 更新並安裝 cron 和其他必要工具
 RUN apt-get update && \
@@ -22,6 +24,8 @@ RUN if ! php -m | grep -q smbclient; then \
         echo "smbclient already installed"; \
     fi
 
-# 確保容器啟動時不會因服務錯誤崩潰
+# 確保 PHP APCU 擴展可用於 CLI
+RUN echo "apc.enable_cli=1" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+
 # 設定 cron 和啟動服務
-CMD service cron start && apache2-foreground
+CMD cron && apache2-foreground
