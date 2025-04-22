@@ -704,7 +704,7 @@ class OC {
 			if (count($errors) > 0) {
 				if (!self::$CLI) {
 					http_response_code(503);
-					OC_Util::addStyle('guest');
+					Util::addStyle('guest');
 					try {
 						Server::get(ITemplateManager::class)->printGuestPage('', 'error', ['errors' => $errors]);
 						exit;
@@ -741,7 +741,7 @@ class OC {
 			self::$server->getSession()->set('user_id', '');
 		}
 
-		OC_User::useBackend(new \OC\User\Database());
+		Server::get(\OCP\IUserManager::class)->registerBackend(new \OC\User\Database());
 		Server::get(\OCP\IGroupManager::class)->addBackend(new \OC\Group\Database());
 
 		// Subscribe to the hook

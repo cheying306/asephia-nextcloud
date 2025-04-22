@@ -5,6 +5,9 @@ OC.L10N.register(
     "Reminder for {name}" : "Erinnerung für {name}",
     "View file" : "Datei anzeigen",
     "View folder" : "Ordner anzeigen",
+    "Files reminder" : "Dateierinnerung",
+    "The \"files_reminders\" app can work properly." : "Die App \"files_reminders\" kann ordnungsgemäß funktionieren.",
+    "The \"files_reminders\" app needs the notification app to work properly. You should either enable notifications or disable files_reminder." : "Die App \"files_reminders“ benötigt die Benachrichtigungs-App, um ordnungsgemäß zu funktionieren. Sie sollten entweder Benachrichtigungen aktivieren oder „files_reminders“ deaktivieren.",
     "Set file reminders" : "Dateierinnerungen setzen",
     "**📣 File reminders**\n\nSet file reminders.\n\nNote: to use the `File reminders` app, ensure that the `Notifications` app is installed and enabled. The `Notifications` app provides the necessary APIs for the `File reminders` app to work correctly." : "**📣 Dateierinnerungen**\n\nDateierinnerungen festlegen.\n\nHinweis: Um die App ``Dateierinnerungen` zu verwenden, stelle sicher, dass die App `Benachrichtigungen` installiert und aktiviert ist. Die App `Benachrichtigungen` bietet die erforderlichen APIs, damit die App `Dateierinnerungen`ordnungsgemäß funktioniert.",
     "Set reminder for \"{fileName}\"" : "Erinnerung für \"{fileName}\" setzen",
@@ -27,6 +30,8 @@ OC.L10N.register(
     "This weekend" : "Dieses Wochenende",
     "Set reminder for this weekend" : "Erinnerung für dieses Wochenende erstellen",
     "Next week" : "Nächste Woche",
-    "Set reminder for next week" : "Erinnerung für nächste Woche erstellen"
+    "Set reminder for next week" : "Erinnerung für nächste Woche erstellen",
+    "This files_reminder can work properly." : "Dieser „files_reminder“ funktioniert ordnungsgemäß.",
+    "The files_reminder app needs the notification app to work properly. You should either enable notifications or disable files_reminder." : "Die App „files_reminder“ benötigt die Benachrichtigungs-App, um ordnungsgemäß zu funktionieren. Sie sollten entweder Benachrichtigungen aktivieren oder „files_reminder“ deaktivieren."
 },
 "nplurals=2; plural=(n != 1);");

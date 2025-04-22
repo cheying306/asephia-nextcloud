@@ -251,6 +251,7 @@
 				</NcButton>
 				<NcButton type="primary"
 					data-cy-files-sharing-share-editor-action="save"
+					:disabled="creating"
 					@click="saveShare">
 					{{ shareButtonText }}
 					<template v-if="creating" #icon>
@@ -493,26 +494,6 @@ export default {
 				this.share.expireDate = enabled
 					? this.formatDateToString(this.defaultExpiryDate)
 					: ''
-			},
-		},
-		/**
-		 * Is the current share password protected ?
-		 *
-		 * @return {boolean}
-		 */
-		isPasswordProtected: {
-			get() {
-				return this.config.enforcePasswordForPublicLink
-					|| !!this.share.password
-			},
-			async set(enabled) {
-				if (enabled) {
-					this.share.password = await GeneratePassword(true)
-					this.$set(this.share, 'newPassword', this.share.password)
-				} else {
-					this.share.password = ''
-					this.$delete(this.share, 'newPassword')
-				}
 			},
 		},
 		/**
@@ -872,8 +853,9 @@ export default {
 		async initializeAttributes() {
 
 			if (this.isNewShare) {
-				if (this.isPasswordEnforced && this.isPublicShare) {
+				if ((this.config.enableLinkPasswordByDefault || this.isPasswordEnforced) && this.isPublicShare) {
 					this.$set(this.share, 'newPassword', await GeneratePassword(true))
+					this.$set(this.share, 'password', this.share.newPassword)
 					this.advancedSectionAccordionExpanded = true
 				}
 				/* Set default expiration dates if configured */
@@ -1003,8 +985,16 @@ export default {
 					incomingShare.password = this.share.password
 				}
 
-				this.creating = true
-				const share = await this.addShare(incomingShare)
+				let share
+				try {
+					this.creating = true
+					share = await this.addShare(incomingShare)
+				} catch (error) {
+					this.creating = false
+					// Error is already handled by ShareRequests mixin
+					return
+				}
+
 				// ugly hack to make code work - we need the id to be set but at the same time we need to keep values we want to update
 				this.share._share.id = share.id
 				await this.queueUpdate(...permissionsAndAttributes)
@@ -1018,6 +1008,7 @@ export default {
 						}
 					}
 				}
+
 				this.share = share
 				this.creating = false
 				this.$emit('add:share', this.share)

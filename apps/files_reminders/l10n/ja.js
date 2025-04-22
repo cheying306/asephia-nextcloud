@@ -5,6 +5,7 @@ OC.L10N.register(
     "Reminder for {name}" : "{name}のリマインダー",
     "View file" : "ファイルを表示",
     "View folder" : "フォルダーを表示",
+    "Files reminder" : "ファイル リマインダー",
     "Set file reminders" : "ファイルのリマインダーを設定する",
     "**📣 File reminders**\n\nSet file reminders.\n\nNote: to use the `File reminders` app, ensure that the `Notifications` app is installed and enabled. The `Notifications` app provides the necessary APIs for the `File reminders` app to work correctly." : "**📣 File reminders**\n\nファイルのリマインダーを設定します。\n\n注意：`File reminders`アプリを使用するには、`Notifications`アプリがインストールされ、有効になっていることを確認してください。Notifications` アプリは `File reminders` アプリが正しく動作するために必要な API を提供します。",
     "Set reminder for \"{fileName}\"" : "\"{fileName}\"のリマインダーを設定",
@@ -27,6 +28,8 @@ OC.L10N.register(
     "This weekend" : "この週末",
     "Set reminder for this weekend" : "今週末のリマインダーを設定する",
     "Next week" : "来週",
-    "Set reminder for next week" : "来週のリマインダーを設定する"
+    "Set reminder for next week" : "来週のリマインダーを設定する",
+    "This files_reminder can work properly." : "このfiles_reminderは正しく機能します。",
+    "The files_reminder app needs the notification app to work properly. You should either enable notifications or disable files_reminder." : "files_reminderアプリが正しく動作するには、通知アプリが必要です。通知を有効にするか、files_reminderを無効にしてください。"
 },
 "nplurals=1; plural=0;");
